@@ -2,14 +2,19 @@
 
 import { useState } from "react"
 
-export function PasswordToggle(){
+export function usePasswordToggle(){
     const [showPassword,setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const toggle=()=> {
         setShowPassword((prev)=> !prev)
+    }
+    const confirmToggle=()=> {
+        setShowConfirmPassword((prev) => !prev)
     }
 
     return{
         showPassword,
-        toggle
+        toggle,
+        showConfirmPassword, confirmToggle
     }
 }

@@ -17,15 +17,16 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 
-import { PasswordToggle } from "@/hooks/pswd-toggler"
+import { usePasswordToggle } from "@/hooks/pswd-toggler"
 import { Eye, EyeClosed } from "lucide-react"
+import Link from "next/link"
 
 export function LoginForm({
     
   className,
   ...props
 }: React.ComponentProps<"div">) {
-    const {showPassword, toggle} = PasswordToggle()
+    const {showPassword, toggle} = usePasswordToggle()
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -67,7 +68,7 @@ export function LoginForm({
                 <Button type="submit">Login</Button>
                 
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="#">Register</a>
+                  Don't have an account? <Link href="/register">Register</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
