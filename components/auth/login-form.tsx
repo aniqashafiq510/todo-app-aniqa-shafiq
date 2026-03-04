@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from "@/lib/utils"
+
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -16,19 +16,14 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-
 import { usePasswordToggle } from "@/hooks/pswd-toggler"
 import { Eye, EyeClosed } from "lucide-react"
 import Link from "next/link"
 
-export function LoginForm({
-    
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export function LoginForm() {
     const {showPassword, toggle} = usePasswordToggle()
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className="flex flex-col gap-6">
       <Card>
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>

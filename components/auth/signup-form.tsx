@@ -20,10 +20,10 @@ import { Eye, EyeClosed } from "lucide-react"
 import Link from "next/link"
 
 
-export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
+export function SignupForm() {
     const {toggle,showPassword, showConfirmPassword, confirmToggle} = usePasswordToggle()
   return (
-    <Card {...props}>
+    <Card>
       <CardHeader>
         <CardTitle>Create an account</CardTitle>
         <CardDescription>
