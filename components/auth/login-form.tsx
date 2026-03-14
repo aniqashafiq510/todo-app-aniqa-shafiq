@@ -17,10 +17,44 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { usePasswordToggle } from "@/hooks/pswd-toggler"
+import { signIn } from "@/lib/auth-client"
+import { loginSchema, LoginFormValues } from "@/lib/zodSchemas/login"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Eye, EyeClosed } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+
+
+
 
 export function LoginForm() {
+  const router = useRouter()
+  const [serverError, setServerError] = useState<string | null>(null)
+
+  // react hook form(useForm)
+  const {register, handleSubmit, formState : {errors, isSubmitting}} = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email : "", password : ""
+    }
+  })
+
+  // submitHandler
+  const onSubmit = async (v : LoginFormValues) => {
+    setServerError(null)
+    const res = await signIn.email({
+      email : v.email,
+      password : v.password
+    });
+    if(res.error){
+      setServerError(res.error.message || "Something went wrong!")
+      return
+    }
+    else{router.push("/dashboard")}
+  }
+
     const {showPassword, toggle} = usePasswordToggle()
   return (
     <div className="flex flex-col gap-6">
@@ -32,16 +66,17 @@ export function LoginForm() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
+                <Input {...register("email")}
                   id="email"
                   type="email"
                   placeholder="youremail@example.com"
                   required
                 />
+                {errors.email && <p className="text-red-500">{errors.email.message}</p>}
               </Field>
               <Field>
                 <div className="flex items-center">
@@ -49,18 +84,13 @@ export function LoginForm() {
                   <button className="ml-auto"
                 type="button" onClick={toggle}
                 > {showPassword ? <EyeClosed size={22}/> : <Eye size={22}/> }</button>
-                  {/* <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a> */}
+                  
                 </div>
-                <Input id="password" type={showPassword ? "text" : "password"} required />
-                
+                <Input {...register("password")} id="password" type={showPassword ? "text" : "password"} required />
+                {errors.password && <p className="text-red-500">{errors.password.message}</p>}
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit" disabled={isSubmitting} >Login</Button>
                 
                 <FieldDescription className="text-center">
                   Don't have an account? <Link href="/register">Register</Link>

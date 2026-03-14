@@ -16,12 +16,50 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { usePasswordToggle } from "@/hooks/pswd-toggler"
+import { signUp } from "@/lib/auth-client"
 import { Eye, EyeClosed } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import {zodResolver} from '@hookform/resolvers/zod'
+import { useForm } from "react-hook-form"
+import { signupSchema, SignupFormValues } from "@/lib/zodSchemas/signup"
+
 
 
 export function SignupForm() {
-    const {toggle,showPassword, showConfirmPassword, confirmToggle} = usePasswordToggle()
+   const router = useRouter(); 
+   const [serverError, setServerError] = useState<string | null>(null);
+
+  //  react hook form with zod
+ const {register, handleSubmit, formState : {errors, isSubmitting}} = useForm<SignupFormValues>({
+    resolver : zodResolver(signupSchema),
+    defaultValues : {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    }
+  })
+   
+   
+   const onSubmit = async (v : SignupFormValues) => {
+    setServerError(null)
+    
+    const res = await signUp.email({
+      name : v.name,
+      email: v.email, password: v.password, 
+    }); 
+    if(res.error){
+      setServerError(res.error.message || "Something went wrong!")
+      return
+    }
+    else{router.push("/dashboard")}
+
+   }
+  
+   const {toggle,showPassword, showConfirmPassword, confirmToggle} = usePasswordToggle()
+
   return (
     <Card>
       <CardHeader>
@@ -31,20 +69,22 @@ export function SignupForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="name">Full Name</FieldLabel>
-              <Input id="name" type="text" placeholder="John Doe" required />
+              <Input {...register("name")} id="name" type="text" placeholder="John Doe" required />
+              {errors.name && <p className="text-red-500">{errors.name.message}</p>}
             </Field>
             <Field>
               <FieldLabel htmlFor="email">Email</FieldLabel>
-              <Input
+              <Input {...register("email")}
                 id="email"
                 type="email"
                 placeholder="m@example.com"
                 required
               />
+              {errors.email && <p className="text-red-500">{errors.email.message}</p>}
               
             </Field>
             <Field>
@@ -54,8 +94,9 @@ export function SignupForm() {
               </button>
               </FieldLabel>
               
-              <Input id="password" type={showPassword? "text" : "password"} required />
-              
+              <Input {...register("password")}  placeholder="********"
+              id="password" type={showPassword? "text" : "password"} required />
+              {errors.password && <p className="text-red-500">{errors.password.message}</p>}
             </Field>
             <Field>
               <FieldLabel htmlFor="confirm-password">
@@ -64,12 +105,15 @@ export function SignupForm() {
                 {showConfirmPassword ? <EyeClosed size={22}/> : <Eye size={22}/>}
               </button>
               </FieldLabel>
-              <Input id="confirm-password" type={showConfirmPassword? "text" : "password"} required />
+              <Input {...register("confirmPassword")} placeholder="********"
+               id="confirm-password" type={showConfirmPassword? "text" : "password"} required />
+               {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword.message}</p>}
               
             </Field>
+            {serverError && <p className="text-red-500">{serverError}</p>}
             <FieldGroup>
               <Field>
-                <Button type="submit">Create Account</Button>
+                <Button type="submit" disabled={isSubmitting}>Create Account</Button>
                 <FieldDescription className="px-6 text-center">
                   Already have an account? <Link href="/login">Log in</Link>
                 </FieldDescription>
