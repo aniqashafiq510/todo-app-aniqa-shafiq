@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { usePasswordToggle } from "@/hooks/pswd-toggler"
-import { signUp } from "@/lib/auth-client"
 import { Eye, EyeClosed } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -24,10 +23,12 @@ import { useState } from "react"
 import {zodResolver} from '@hookform/resolvers/zod'
 import { useForm } from "react-hook-form"
 import { signupSchema, SignupFormValues } from "@/lib/zodSchemas/signup"
-
+import { signUpUser } from "@/lib/authService"
+import { toast } from "sonner"
 
 
 export function SignupForm() {
+  const {toggle,showPassword, showConfirmPassword, confirmToggle} = usePasswordToggle()
    const router = useRouter(); 
    const [serverError, setServerError] = useState<string | null>(null);
 
@@ -42,23 +43,23 @@ export function SignupForm() {
     }
   })
    
-   
-   const onSubmit = async (v : SignupFormValues) => {
+  const onSubmit = async (v : SignupFormValues) => {
     setServerError(null)
     
-    const res = await signUp.email({
-      name : v.name,
-      email: v.email, password: v.password, 
-    }); 
+    const res = await signUpUser(v)
+
     if(res.error){
-      setServerError(res.error.message || "Something went wrong!")
+      setServerError("Something went wrong!")
+      console.log(res.error)
       return
     }
-    else{router.push("/dashboard")}
+    else{router.push("/dashboard")
+      toast.success("Account created successfully", {position : "top-center"})
+    }
 
    }
   
-   const {toggle,showPassword, showConfirmPassword, confirmToggle} = usePasswordToggle()
+   
 
   return (
     <Card>

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { usePasswordToggle } from "@/hooks/pswd-toggler"
-import { signIn } from "@/lib/auth-client"
+import { loginUser } from "@/lib/authService"
 import { loginSchema, LoginFormValues } from "@/lib/zodSchemas/login"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Eye, EyeClosed } from "lucide-react"
@@ -25,6 +25,9 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+
+
 
 
 
@@ -44,15 +47,15 @@ export function LoginForm() {
   // submitHandler
   const onSubmit = async (v : LoginFormValues) => {
     setServerError(null)
-    const res = await signIn.email({
-      email : v.email,
-      password : v.password
-    });
+    const res = await loginUser(v);
     if(res.error){
-      setServerError(res.error.message || "Something went wrong!")
+      setServerError("Something went wrong!")
+      console.log(res.error)
       return
     }
-    else{router.push("/dashboard")}
+    else{router.replace("/dashboard")
+      toast.success("Logged In!",{position: "top-center"})
+    }
   }
 
     const {showPassword, toggle} = usePasswordToggle()
@@ -89,11 +92,12 @@ export function LoginForm() {
                 <Input {...register("password")} id="password" type={showPassword ? "text" : "password"} required />
                 {errors.password && <p className="text-red-500">{errors.password.message}</p>}
               </Field>
+              {serverError && <p className="text-red-500">{serverError}</p>}
               <Field>
                 <Button type="submit" disabled={isSubmitting} >Login</Button>
                 
                 <FieldDescription className="text-center">
-                  Don't have an account? <Link href="/register">Register</Link>
+                  Don&apos;t have an account? <Link href="/register">Register</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
