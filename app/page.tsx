@@ -1,7 +1,7 @@
 "use client"
 import { handleLogOut } from "@/lib/logout"
 import { Button } from "@/components/ui/button"
-import { useSession } from "@/lib/auth-client"
+import { useSession } from "@/lib/auth/auth-client"
 import Link from "next/link"
 import { useState } from "react"
 

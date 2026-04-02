@@ -1,11 +1,12 @@
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 
 // addTask
 export const POST= async (req : Request) => {
-    try {
+
+try {
         const session = await auth.api.getSession({
             headers : req.headers
         })
@@ -14,15 +15,46 @@ export const POST= async (req : Request) => {
                 error : "Unauthorized",
             }, {status : 401})
         }
+
+        // show task limit for free users
+         const user = await prisma.user.findUnique({
+              where: { id: session.user.id },
+              select: {
+                id: true,
+                subscriptionPlan: true,
+                subscriptionStatus: true,
+              },
+            });
+
+            if (!user) {
+              return NextResponse.json({ error: "User not found" }, { status: 404 });
+            }
+
+            const isPro =
+              user.subscriptionPlan === "pro" &&
+              user.subscriptionStatus === "active";
+
+            const taskCount = await prisma.task.count({
+              where: { userId: user.id },
+            });
+
+            if (!isPro && taskCount >= 5) {
+              return NextResponse.json(
+                { error: "Free plan limit reached (10 tasks)" },
+                { status: 403 }
+              );
+            }
+
+            // add Task
         const body = await req.json()
         const {title, description, dueDate} = body 
 
-        const task = await prisma.task.create({
+       const task = await prisma.task.create({
             data : {
                 title,
                 description,
                 dueDate: dueDate ? new Date(dueDate) : null ,
-                userId : session.user.id
+                userId : user.id
             }
         })
         return NextResponse.json(task)

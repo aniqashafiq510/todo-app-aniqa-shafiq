@@ -23,7 +23,7 @@ import { useState } from "react"
 import {zodResolver} from '@hookform/resolvers/zod'
 import { useForm } from "react-hook-form"
 import { signupSchema, SignupFormValues } from "@/lib/zodSchemas/signup"
-import { signUpUser } from "@/lib/authService"
+import { signUpUser } from "@/lib/auth/authService"
 import { toast } from "sonner"
 
 
@@ -49,7 +49,7 @@ export function SignupForm() {
     const res = await signUpUser(v)
 
     if(res.error){
-      setServerError("Something went wrong!")
+      setServerError(res.error)
       console.log(res.error)
       return
     }

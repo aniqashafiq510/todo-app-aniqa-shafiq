@@ -6,9 +6,7 @@ import { useDeleteToggler } from "@/hooks/delete-toggler"
 import {  useState } from "react"
 import { Edit, Trash } from "lucide-react"
 import useTasks from "@/hooks/useTasks"
-
-
-
+import { useSubscriptionInfo } from '@/hooks/useSubscriptionInfo'
 
 
 export function TasksTable(){
@@ -16,6 +14,12 @@ export function TasksTable(){
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
     
     const {tasks,loading, toggleStatus,deleteTask} = useTasks()
+    
+    // disabling addTask Button
+    const FiveTasks = tasks.length === 5
+    const {userSubscription} = useSubscriptionInfo()
+    const isFree = userSubscription?.subscriptionPlan !== "pro" && userSubscription?.subscriptionStatus !== "active"
+
 
     const openDeleteModal = (taskId: string) => {
     setSelectedTaskId(taskId);
@@ -32,12 +36,19 @@ export function TasksTable(){
 
                 {/* Add task button */}
                 <div className="flex justify-end p-4">
-                    <Link
+                    {(FiveTasks && isFree) ? (
+                        <div>
+                        <span className="cursor-not-allowed
+                        bg-blue-500 hover:bg-blue-700 text-white rounded-md px-4 py-2 font-medium"
+                        >Limit Reached</span>
+                        </div>
+                    ) : (<Link
                     href="/dashboard/add-task"
                     className="bg-blue-500 hover:bg-blue-700 text-white rounded-md px-4 py-2 font-medium"
                     >
                         Add Task
-                    </Link>
+                    </Link>)}
+                    
                 </div>
 
                 <div className="overflow-x-auto ">

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { usePasswordToggle } from "@/hooks/pswd-toggler"
-import { loginUser } from "@/lib/authService"
+import { loginUser } from "@/lib/auth/authService"
 import { loginSchema, LoginFormValues } from "@/lib/zodSchemas/login"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Eye, EyeClosed } from "lucide-react"
@@ -49,7 +49,7 @@ export function LoginForm() {
     setServerError(null)
     const res = await loginUser(v);
     if(res.error){
-      setServerError("Something went wrong!")
+      setServerError(res.error)
       console.log(res.error)
       return
     }

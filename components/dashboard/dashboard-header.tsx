@@ -1,5 +1,5 @@
 "use client"
-import { useSession} from "@/lib/auth-client";
+import { useSession} from "@/lib/auth/auth-client";
 import { handleLogOut } from "../../lib/logout";
 import { Button } from "../ui/button";
 import { useState } from "react";

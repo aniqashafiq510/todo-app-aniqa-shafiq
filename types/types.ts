@@ -24,5 +24,10 @@ export type TaskFormValues =  {
   dueDate: string;
 }
 
+export type SubscriptionInfo = {
+ id : string ,
+ subscriptionPlan: string | null;
+ subscriptionStatus: string | null;
+}
 
 
