@@ -8,7 +8,8 @@ export const getTasks=async  () => {
     if(!res.ok) throw new Error("Failed to fetch tasks")
     return res.json()
 } 
-
+// headers telling the incoming data is in JSON formatt,
+//  method iS PATCH, and Json.stringify means convert the json object data into json string
 export const toggleStatusApi  = async(task : Task) => {
     const res = await fetch(`/api/tasks/${task.id}`, {
             method: "PATCH",

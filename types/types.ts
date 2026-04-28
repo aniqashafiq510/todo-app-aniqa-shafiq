@@ -1,11 +1,21 @@
 
+// export type Task = {
+//   id: string
+//   title: string
+//   description: string
+//   dueDate: string | null
+//   completed: boolean
+// }
 export type Task = {
-  id: string
-  title: string
-  description: string
-  dueDate: string | null
-  completed: boolean
-}
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+  title: string;
+  description: string | null;
+  dueDate: Date | null;
+  completed: boolean;
+};
 
 
 export type DeleteTaskProps = {
@@ -30,4 +40,9 @@ export type SubscriptionInfo = {
  subscriptionStatus: string | null;
 }
 
+
+export type SearchBarProps = {
+  query: string;
+  setQuery: (value: string) => void;
+}
 

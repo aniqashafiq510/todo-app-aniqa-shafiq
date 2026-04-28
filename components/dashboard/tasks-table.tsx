@@ -7,19 +7,24 @@ import {  useState } from "react"
 import { Edit, Trash } from "lucide-react"
 import useTasks from "@/hooks/useTasks"
 import { useSubscriptionInfo } from '@/hooks/useSubscriptionInfo'
+import type { Task } from "@/types/types"
 
 
-export function TasksTable(){
+export function TasksTable({ externalTasks }: { externalTasks?: Task[] | null }){
     const {showDelete, deltoggle} = useDeleteToggler()
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
     
-    const {tasks,loading, toggleStatus,deleteTask} = useTasks()
+    const hookData = useTasks();
+
+    const tasks = externalTasks ?? hookData.tasks;
+    const loading = hookData.loading;
+    const toggleStatus = hookData.toggleStatus;
+    const deleteTask = hookData.deleteTask;
     
     // disabling addTask Button
     const FiveTasks = tasks.length === 5
     const {userSubscription} = useSubscriptionInfo()
     const isFree = userSubscription?.subscriptionPlan !== "pro" && userSubscription?.subscriptionStatus !== "active"
-
 
     const openDeleteModal = (taskId: string) => {
     setSelectedTaskId(taskId);

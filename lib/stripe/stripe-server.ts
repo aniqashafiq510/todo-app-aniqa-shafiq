@@ -36,8 +36,6 @@ export async function createCheckoutSession(userId: string, priceId: string) {
   return session.url;
 }
 
-
-
 // managing subscription
 
 export async function createBillingPortalSession(userId: string) {

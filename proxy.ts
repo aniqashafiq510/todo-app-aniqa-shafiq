@@ -8,6 +8,7 @@ export async function proxy(request: NextRequest) {
   });
 
   const { pathname } = request.nextUrl;
+  // https//localhost:3000/dashboard/addTask
 
   // Routes
   const authRoutes = ["/login", "/register"];
