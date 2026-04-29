@@ -42,7 +42,15 @@ export type SubscriptionInfo = {
 
 
 export type SearchBarProps = {
-  query: string;
-  setQuery: (value: string) => void;
-}
+  filters: Filters;
+  setFilters: React.Dispatch<React.SetStateAction<Filters>>;
+};
 
+// React.Dispatch<React.SetStateAction<Filters>>...react ka built in state update function type 
+
+export type Filters = {
+  query: string;
+  status: "all" | "completed" | "pending";
+  dateType: "createdAt" | "dueDate";
+  date: string;
+};

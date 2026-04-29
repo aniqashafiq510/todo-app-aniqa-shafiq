@@ -144,8 +144,18 @@ export function TasksTable({ externalTasks }: { externalTasks?: Task[] | null })
                             </tr>
                             ))}
                                 </tbody>
-                            ) : (
-                                <tbody>
+                            ) : ( externalTasks ? 
+                                (<tbody>
+                                        <tr>
+                                            <td
+                                            colSpan={5}
+                                            className="text-center py-10 text-gray-500"
+                                            >
+                                            No results found!
+                                            </td>
+                                        </tr>
+                                 </tbody>) : (
+                                    <tbody>
                                         <tr>
                                             <td
                                             colSpan={5}
@@ -155,6 +165,7 @@ export function TasksTable({ externalTasks }: { externalTasks?: Task[] | null })
                                             </td>
                                         </tr>
                                  </tbody>
+                                 )
                             )}
                             
                         

@@ -11,7 +11,7 @@ import { useSession } from "@/lib/auth/auth-client";
 import { SearchTasks } from "@/serverActions/tasks/searchTasks";
 import { useRouter } from "next/navigation";
 import { useEffect,useState } from "react";
-import type { Task } from "@/types/types";
+import type { Task, Filters } from "@/types/types";
 
 
 
@@ -29,42 +29,47 @@ export default function  Dashboardpage(){
     }
   }, [session, isPending, router]);
 
-  // searching
-  const [query, setQuery] = useState("");
+  // searching and filtering
+  const [filters, setFilters] = useState<Filters>({
+  query: "",
+  status: "all",
+  dateType: "createdAt",
+  date: "",
+  });
   const [searchedTasks, setSearchedTasks] = useState<Task[] | null>(null);;
   const userId = session?.user?.id
 
   // debounce
   useEffect(() => {
-  if (!userId) return;
+    if (!userId) return;
+  
+    if (
+        !filters.query &&
+        filters.status === "all" &&
+        !filters.date
+      ) {
+        setSearchedTasks(null);
+        return;
+      }
 
   const timer = setTimeout(async () => {
-
-    // if search is empty → reset to API mode
-    if (!query.trim()) {
-      setSearchedTasks(null);
-      return;
-    }
-
-    const data = await SearchTasks(userId, query);
-
+    const data = await SearchTasks(userId, filters);
     setSearchedTasks(data);
-
   }, 500);
 
   return () => clearTimeout(timer);
-}, [query, userId]);
+}, [filters, userId]);
 
    return(
 
     <div>
        {userSubscription && (
         isSubscribed ? (
-        <div className="flex justify-end m-5">
+        <div className="flex justify-end mt-3 mr-3 -mb-5">
           <ManageSubscriptionButton userId={userSubscription.id}/>
         </div>
        ) :(
-        <div className="flex justify-end m-5">
+        <div className="flex justify-end mt-3 mr-3 -mb-5">
           <SubscribeButton userId={userSubscription?.id}/>
         </div>
        ))}
@@ -80,7 +85,7 @@ export default function  Dashboardpage(){
       <div className="w-full max-w-lvh ">
         <DashboardHeader/>
         
-        <SearchBar query={query} setQuery={setQuery} />
+        <SearchBar filters={filters} setFilters={setFilters} />
 
         <TasksTable externalTasks={searchedTasks} />
         
