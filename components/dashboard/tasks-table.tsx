@@ -7,10 +7,13 @@ import {  useState } from "react"
 import { Edit, Trash } from "lucide-react"
 import useTasks from "@/hooks/useTasks"
 import { useSubscriptionInfo } from '@/hooks/useSubscriptionInfo'
-import type { Task } from "@/types/types"
+import SortDropdown from "../tasks/SortDropdown"
+import type { ExternalTasks } from "@/types/types"
 
 
-export function TasksTable({ externalTasks }: { externalTasks?: Task[] | null }){
+
+export function TasksTable({ externalTasks, sortField, setSortField,
+    sortOrder, setSortOrder }:   ExternalTasks){
     const {showDelete, deltoggle} = useDeleteToggler()
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
     
@@ -30,6 +33,7 @@ export function TasksTable({ externalTasks }: { externalTasks?: Task[] | null })
     setSelectedTaskId(taskId);
     deltoggle();
   };
+    
   
   if(loading){
         return <p className="text-center mt-10">Loading tasks...</p>
@@ -39,8 +43,14 @@ export function TasksTable({ externalTasks }: { externalTasks?: Task[] | null })
         <div className="mt-12 mb-10 mx-4">
             <div className="bg-gray-200 rounded-md shadow-lg">
 
-                {/* Add task button */}
-                <div className="flex justify-end p-4">
+                {/* Add task button and sorting */}
+                <div className="flex justify-between p-4">
+                    <SortDropdown
+                        sortField={sortField}
+                        setSortField={setSortField}
+                        sortOrder={sortOrder}
+                        setSortOrder={setSortOrder}
+                    />
                     {(FiveTasks && isFree) ? (
                         <div>
                         <span className="cursor-not-allowed

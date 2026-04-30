@@ -2,16 +2,19 @@
 
 
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
-import SearchBar from "@/components/dashboard/searchBar";
+import SearchBar from "@/components/tasks/SearchBar";
 import {SubscribeButton,ManageSubscriptionButton} from "@/components/dashboard/SubscribeButton";
 import { TaskLimit } from "@/components/dashboard/task-limit";
 import { TasksTable } from "@/components/dashboard/tasks-table";
 import { useSubscriptionInfo } from "@/hooks/useSubscriptionInfo";
 import { useSession } from "@/lib/auth/auth-client";
-import { SearchTasks } from "@/serverActions/tasks/searchTasks";
 import { useRouter } from "next/navigation";
-import { useEffect,useState } from "react";
-import type { Task, Filters } from "@/types/types";
+import { useEffect} from "react";
+import { useTasksManage } from "@/hooks/useTaskManage";
+
+import Pagination from "@/components/tasks/Pagination";
+
+
 
 
 
@@ -21,6 +24,7 @@ export default function  Dashboardpage(){
   const router = useRouter()
   const {data : session, isPending} = useSession()
   const { userSubscription} = useSubscriptionInfo()
+  const userId = session?.user?.id
   
   const isSubscribed = userSubscription?.subscriptionStatus === "active";
   useEffect(() => {
@@ -29,38 +33,18 @@ export default function  Dashboardpage(){
     }
   }, [session, isPending, router]);
 
-  // searching and filtering
-  const [filters, setFilters] = useState<Filters>({
-  query: "",
-  status: "all",
-  dateType: "createdAt",
-  date: "",
-  });
-  const [searchedTasks, setSearchedTasks] = useState<Task[] | null>(null);;
-  const userId = session?.user?.id
+  // task mangement
+  const {filters,
+    setFilters,
+    page,
+    setPage,
+    limit,
+    searchedTasks,sortField,
+    setSortField,
+    sortOrder,
+    setSortOrder,} = useTasksManage(userId)
 
-  // debounce
-  useEffect(() => {
-    if (!userId) return;
-  
-    if (
-        !filters.query &&
-        filters.status === "all" &&
-        !filters.date
-      ) {
-        setSearchedTasks(null);
-        return;
-      }
-
-  const timer = setTimeout(async () => {
-    const data = await SearchTasks(userId, filters);
-    setSearchedTasks(data);
-  }, 500);
-
-  return () => clearTimeout(timer);
-}, [filters, userId]);
-
-   return(
+  return(
 
     <div>
        {userSubscription && (
@@ -87,7 +71,17 @@ export default function  Dashboardpage(){
         
         <SearchBar filters={filters} setFilters={setFilters} />
 
-        <TasksTable externalTasks={searchedTasks} />
+        <TasksTable externalTasks={searchedTasks}
+        sortField={sortField}
+        setSortField={setSortField}
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder} />
+
+        <Pagination
+            page={page}
+            setPage={setPage}
+            hasNextPage={searchedTasks?.length === limit}
+          />
         
         
       </div>

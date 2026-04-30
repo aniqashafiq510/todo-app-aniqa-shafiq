@@ -22,7 +22,8 @@ export function UpdateTask({ taskId }: UpdateTaskProps) {
       if (task) {
         setValue("title", task.title);
         setValue("description", task.description || "");
-        setValue("dueDate", task.dueDate ? task.dueDate.split("T")[0] : "");
+        setValue("dueDate", task.dueDate ? new Date(task.dueDate).toISOString().slice(0, 10)
+    : "");
       }
     };
     loadTask();
@@ -33,7 +34,9 @@ export function UpdateTask({ taskId }: UpdateTaskProps) {
   const onSubmit = async (data: TaskFormValues) => {
     setServerError(null);
     try {
-      await updateTask(taskId, data);
+      await updateTask(taskId,  {
+      ...data,
+      dueDate: new Date(data.dueDate),});
       router.replace("/dashboard"); // redirect after update
     } catch (err: unknown) {
       setServerError( "Failed to update task");

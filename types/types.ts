@@ -1,11 +1,4 @@
 
-// export type Task = {
-//   id: string
-//   title: string
-//   description: string
-//   dueDate: string | null
-//   completed: boolean
-// }
 export type Task = {
   id: string;
   createdAt: Date;
@@ -54,3 +47,21 @@ export type Filters = {
   dateType: "createdAt" | "dueDate";
   date: string;
 };
+
+export type SearchTasksParams = {
+  userId: string;
+  filters: Filters;
+  sortField: "createdAt" | "dueDate" | "title";
+  sortOrder: "asc" | "desc";
+  page?: number;
+  limit?: number;
+}
+
+export type ExternalTasks  = {
+  externalTasks : Task[];
+  sortField: SearchTasksParams["sortField"];
+  setSortField: (value: SearchTasksParams["sortField"]) => void;
+  sortOrder: SearchTasksParams["sortOrder"];
+  setSortOrder: (value: SearchTasksParams["sortOrder"]) => void;
+}
+

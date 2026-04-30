@@ -1,12 +1,19 @@
 "use server"
 
 import prisma from "../../lib/prisma" 
-import type { Filters } from "../../types/types";
+import type { SearchTasksParams } from "../../types/types";
 
-export async function SearchTasks(userId : string, filters: Filters){
+export async function SearchTasks({
+    userId,
+    filters,
+    sortField = "createdAt",
+    sortOrder = "desc",
+    page = 1,
+    limit = 5,
+}: SearchTasksParams){
+
     const user = await prisma.user.findUnique({where: {id : userId}})
     const { query, status, dateType, date } = filters;
-
     if (!user) throw new Error("User not found");
     
     return await prisma.task.findMany({
@@ -30,7 +37,18 @@ export async function SearchTasks(userId : string, filters: Filters){
         },
       }),
     },
+
+    orderBy: {
+      [sortField]: sortOrder,
+    },
+    
+
+    skip: (page - 1) * limit,
+    take: limit,
   });
+  
+
+  
 }
 
 // gte ... greater than or equal to
