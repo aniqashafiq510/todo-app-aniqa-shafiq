@@ -13,6 +13,8 @@ import { useEffect} from "react";
 import { useTasksManage } from "@/hooks/useTaskManage";
 
 import Pagination from "@/components/tasks/Pagination";
+import Link from "next/link";
+
 
 
 
@@ -87,6 +89,12 @@ export default function  Dashboardpage(){
       </div>
     </div>
       </div>
+
+      <Link href="/dashboard/ai" className="fixed bottom-6 right-6 z-50 flex items-center gap-2
+      rounded-full bg-black px-5 py-3 text-sm font-medium text-white shadow-lg transition
+      hover:scale-105 hover:opacity-90 ">
+        AI Assistant
+      </Link>
     </div>
   
   )

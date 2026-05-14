@@ -9,11 +9,14 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.73",
+    "@ai-sdk/react": "^3.0.184",
     "@better-auth/prisma-adapter": "^1.5.4",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "@stripe/stripe-js": "^9.0.0",
+    "ai": "^6.0.180",
     "better-auth": "^1.5.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
