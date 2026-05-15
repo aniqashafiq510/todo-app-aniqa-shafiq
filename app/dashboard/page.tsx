@@ -11,9 +11,9 @@ import { useSession } from "@/lib/auth/auth-client";
 import { useRouter } from "next/navigation";
 import { useEffect} from "react";
 import { useTasksManage } from "@/hooks/useTaskManage";
-
 import Pagination from "@/components/tasks/Pagination";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 
 
@@ -91,9 +91,11 @@ export default function  Dashboardpage(){
       </div>
 
       <Link href="/dashboard/ai" className="fixed bottom-6 right-6 z-50 flex items-center gap-2
-      rounded-full bg-black px-5 py-3 text-sm font-medium text-white shadow-lg transition
+      transition
       hover:scale-105 hover:opacity-90 ">
-        AI Assistant
+        <Button>
+          AI Assistant
+        </Button>
       </Link>
     </div>
   

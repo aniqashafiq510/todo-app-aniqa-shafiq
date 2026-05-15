@@ -1,3 +1,6 @@
 import { google } from "@ai-sdk/google";
 
-export const model = google("gemini-2.5-flash-mini");
+export const model = google("gemini-2.5-flash");
+
+
+// gemini-2.5-flash-mini

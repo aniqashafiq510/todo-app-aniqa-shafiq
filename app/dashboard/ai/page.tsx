@@ -5,50 +5,17 @@ import { useState } from "react";
 import ChatInput from "@/components/ai/ChatInput";
 import ChatWindow from "@/components/ai/ChatWindow";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { useAIChat } from "@/hooks/useAI";
 
-type Message = {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-};
+
+
+
+
 
 export default function AIPage() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
-  async function handleSend() {
-    if (!input.trim()) return;
-
-    const userMessage: Message = {
-      id: crypto.randomUUID(),
-      role: "user",
-      content: input,
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-
-    setInput("");
-    setIsLoading(true);
-
-    /*
-      TEMPORARY MOCK AI RESPONSE
-      Replace later with your Server Action
-    */
-
-    setTimeout(() => {
-      const aiMessage: Message = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content:
-          "This is a temporary AI response. Your Gemini integration will appear here.",
-      };
-
-      setMessages((prev) => [...prev, aiMessage]);
-
-      setIsLoading(false);
-    }, 1000);
-  }
+  const {messages,input,setInput,handleSend, isLoading} = useAIChat()
 
   return (
     <div className="flex h-[calc(100vh-64px)] flex-col bg-white">
@@ -75,11 +42,12 @@ export default function AIPage() {
       />
 
 
-      <Link href="/dashboard" className="fixed bottom-6 right-6 z-50 flex items-center gap-2
-      rounded-full bg-black px-5 py-3 text-sm font-medium text-white shadow-lg transition
+      <Link href="/dashboard" className="fixed bottom-6 right-6 z-50 flex items-center gap-2 transition
       hover:scale-105 hover:opacity-90 ">
 
-        Back to Dashboard
+        <Button>
+          Back to Dashboard
+        </Button>
       </Link>
     </div>
   );
