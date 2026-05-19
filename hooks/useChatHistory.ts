@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getChatHistory } from "@/serverActions/ai/history";
 
-import type { ChatHistory } from "@/types/types";
+import type { ChatHistory, RawMessage } from "@/types/types";
 
 export function useChatHistory() {
 
@@ -12,7 +12,7 @@ export function useChatHistory() {
   const [cursor, setCursor] = useState<string | null>(null);
 
   // ✅ normalizer
-  const normalizeMessage = (msg: any): ChatHistory => ({
+  const normalizeMessage = (msg : RawMessage ): ChatHistory => ({
     id: msg.id,
     userId: msg.userId,
     role: msg.role as "user" | "assistant",
@@ -23,11 +23,9 @@ export function useChatHistory() {
         : new Date(msg.createdAt),
   });
 
-  // initial load
-  useEffect(() => {
-    loadInitial();
-  }, []);
-
+// Initial load
+useEffect(() => {
+  // 1. Move the async function inside the effect
   async function loadInitial() {
     setLoading(true);
 
@@ -46,6 +44,15 @@ export function useChatHistory() {
 
     setLoading(false);
   }
+
+  // 2. Execute the function safely
+  loadInitial();
+  
+  // 3. Keep dependency array relevant (omit loadInitial since it is local now)
+}, []); 
+
+
+  
 
   // pagination
   async function loadMore() {

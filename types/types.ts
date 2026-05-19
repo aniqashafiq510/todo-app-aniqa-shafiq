@@ -97,3 +97,10 @@ export type ChatWindowProps = {
   hasMore?: boolean;
 };
 
+export type RawMessage = {
+  id: string;
+  userId: string;
+  role: string;
+  content: string;
+  createdAt: string | Date;
+};
