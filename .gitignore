@@ -1,7 +1,8 @@
 comm# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 
-# git add .    2=>git commit -m "Commit msg"  3=>(for 1st time)git push origin branch-name
+# git add .    2=>git commit -m "Commit msg"  3=>(for 1st time)git push origin branch-name  or
+# git push --set-upstream origin ai-chatbot-integration
 # otherwise 3.git push
 
 

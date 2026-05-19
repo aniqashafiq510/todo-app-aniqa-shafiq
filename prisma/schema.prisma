@@ -13,22 +13,22 @@ datasource db {
   provider = "postgresql"
 }
 
-
 model User {
-  id            String    @id
-  name          String    
-  email         String   
-  emailVerified Boolean   @default(false)
-  stripeCustomerId       String?  @unique
-  stripeSubscriptionId   String?  @unique 
-  subscriptionPlan       String?             
-  subscriptionStatus     String?        
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  tasks         Task[]
+  id                   String      @id
+  name                 String
+  email                String
+  emailVerified        Boolean     @default(false)
+  stripeCustomerId     String?     @unique
+  stripeSubscriptionId String?     @unique
+  subscriptionPlan     String?
+  subscriptionStatus   String?
+  image                String?
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  sessions             Session[]
+  accounts             Account[]
+  tasks                Task[]
+  messages             AIMessage[]
 
   @@unique([email])
   @@map("user")
@@ -83,18 +83,33 @@ model Verification {
 }
 
 model Task {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   description String?
   dueDate     DateTime?
-  completed   Boolean  @default(false)
+  completed   Boolean   @default(false)
 
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@map("task")
+}
+
+model AIMessage {
+  id String @id @default(cuid())
+
+  userId  String
+  role    String // "user" | "assistant" | "system"
+  content String
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@map("aimessage")
 }

@@ -1,20 +1,11 @@
 "use client";
 
-type Props = {
-  input: string;
-  setInput: (value: string) => void;
-  onSend: () => void;
-  disabled?: boolean;
-};
+import type { ChatInputProps } from "@/types/types";
 
-export default function ChatInput({
-  input,
-  setInput,
-  onSend,
-  disabled,
-}: Props) {
-  function handleKeyDown(
-    e: React.KeyboardEvent<HTMLTextAreaElement>
+
+export default function ChatInput({input,setInput,onSend,disabled}: ChatInputProps) {
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>
   ) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();

@@ -8,10 +8,12 @@ import type {Task, TaskFormValues } from "@/types/types";
 
 
 const useTasks = () => {
+  
     const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  
 //   fetch tasks
 useEffect(() => {
     const fetchData = async () => {
@@ -34,10 +36,20 @@ const toggleStatus = async (task: Task) => {
     try {
       const updatedTask = await toggleStatusApi(task);
       setTasks(prev =>
-        prev.map(t => (t.id === task.id ? updatedTask : t))
-      );
-      if (!task.completed) toast.success("Task completed", {position : "top-center"});
-    } catch (err) {
+      prev.map(t =>
+        t.id === task.id
+          ? { ...t, completed: updatedTask.completed }
+          : t
+  )
+);
+    window.location.reload();
+    toast.success(
+      task.completed
+        ? "Task marked as uncompleted"
+        : "Task completed",
+      { position: "top-center" }
+    );
+} catch (err) {
       console.error(err);
       toast.error("Failed to update task", {position : "top-center"});
     }

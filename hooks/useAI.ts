@@ -2,55 +2,51 @@
 
 import { useState } from "react";
 import { chatWithAI } from "@/serverActions/ai/chat";
-
-type Message = {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-};
+import type { AIChat } from "@/types/types";
 
 export function useAIChat() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<AIChat[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleSend() {
-    if (!input.trim()) return;
+  const  handleSend = async() => {
+    const trimmedInput = input.trim();
 
-    // 1. APPEND USER MESSAGE
-    const userMessage: Message = {
-      id: crypto.randomUUID(),
-      role: "user",
-      content: input,
-    };
+    if (!trimmedInput || isLoading) return;
 
-    setMessages((prev) => [...prev, userMessage]);
-    const currentInput = input;
-    setInput("");
     setIsLoading(true);
 
-    // 2. CREATE A PLACEHOLDER FOR THE ASSISTANT'S STREAMING RESPONSE
+    const userMessage: AIChat = {
+      id: crypto.randomUUID(),
+      role: "user",
+      content: trimmedInput,
+    };
+
     const aiMessageId = crypto.randomUUID();
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: aiMessageId,
-        role: "assistant",
-        content: "",
-      },
-    ]);
+
+    const assistantMessage: AIChat = {
+      id: aiMessageId,
+      role: "assistant",
+      content: "",
+    };
+
+    const updatedMessages = [
+      ...messages,
+      userMessage,
+      assistantMessage,
+    ];
+
+    setMessages(updatedMessages);
+    setInput("");
 
     try {
-      // 3. EXECUTE SERVER ACTION (Returns a direct AsyncIterable stream)
-      const textStream = await chatWithAI(currentInput);
+      const textStream = await chatWithAI(updatedMessages);
+
       let aiText = "";
 
-      // 4. READ THE TEXT STREAM DIRECTLY NATIVELY
-      // No response.body, no getReader(), no TextDecoder required
       for await (const chunk of textStream) {
         aiText += chunk;
 
-        // 5. UPDATE STATE LIVE CHUNK BY CHUNK
         setMessages((prev) =>
           prev.map((msg) =>
             msg.id === aiMessageId
@@ -59,20 +55,25 @@ export function useAIChat() {
           )
         );
       }
-    } catch (error) {
-      console.error("Streaming failed:", error);
-      // Optional: Update the placeholder message with an error state
+    } 
+    catch (error) {
       setMessages((prev) =>
         prev.map((msg) =>
           msg.id === aiMessageId
-            ? { ...msg, content: "Error: Failed to generate response." }
+            ? {
+                ...msg,
+                content:
+                  error instanceof Error
+                    ? error.message
+                    : "Something went wrong",
+              }
             : msg
         )
       );
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return {
     messages,

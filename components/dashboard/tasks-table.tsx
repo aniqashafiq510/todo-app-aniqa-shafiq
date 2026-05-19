@@ -19,7 +19,7 @@ export function TasksTable({ externalTasks, sortField, setSortField,
     
     const hookData = useTasks();
 
-    const tasks = externalTasks ?? hookData.tasks;
+    const tasks = externalTasks ?? hookData.tasks
     const loading = hookData.loading;
     const toggleStatus = hookData.toggleStatus;
     const deleteTask = hookData.deleteTask;
@@ -92,7 +92,7 @@ export function TasksTable({ externalTasks, sortField, setSortField,
                                 <td className="border border-gray-300 px-4 py-3 text-center">
                                     <input
                                         type="checkbox"
-                                        checked={task.completed}
+                                        checked={!!task.completed}
                                         onChange={()=>toggleStatus(task)}
                                         className="w-5 h-5 cursor-pointer"
                                     />

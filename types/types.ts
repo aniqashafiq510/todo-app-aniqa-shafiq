@@ -65,3 +65,35 @@ export type ExternalTasks  = {
   setSortOrder: (value: SearchTasksParams["sortOrder"]) => void;
 }
 
+
+export type AIChat = {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+};
+
+export type ChatHistory = {
+  id: string;
+  userId: string;
+  role: "user" | "assistant";
+  content: string;
+  createdAt: Date;
+};
+
+
+export type ChatInputProps = {
+  input: string;
+  setInput: (value: string) => void;
+  onSend: () => void;
+  disabled?: boolean;
+};
+
+export type ChatWindowProps = {
+  messages: AIChat[];
+  isLoading?: boolean;
+
+  // pagination
+  onLoadMore?: () => void;
+  hasMore?: boolean;
+};
+

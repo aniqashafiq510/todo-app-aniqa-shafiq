@@ -1,24 +1,27 @@
 "use client";
 
-import { useState } from "react";
-
 import ChatInput from "@/components/ai/ChatInput";
 import ChatWindow from "@/components/ai/ChatWindow";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+
 import { useAIChat } from "@/hooks/useAI";
-
-
-
-
-
+import { useChatHistory } from "@/hooks/useChatHistory";
 
 export default function AIPage() {
 
-  const {messages,input,setInput,handleSend, isLoading} = useAIChat()
+  const {history,loadMore, hasMore} =useChatHistory();
+  
+  const { messages,input,setInput,handleSend,isLoading,} = useAIChat();
+
+  const allMessages = [
+    ...history,
+    ...messages,
+  ];
 
   return (
     <div className="flex h-[calc(100vh-64px)] flex-col bg-white">
+
       <div className="border-b px-6 py-4">
         <h1 className="text-2xl font-bold">
           AI Assistant
@@ -30,8 +33,11 @@ export default function AIPage() {
       </div>
 
       <ChatWindow
-        messages={messages}
+        messages={allMessages}
         isLoading={isLoading}
+        onLoadMore={loadMore}
+        hasMore={hasMore}
+
       />
 
       <ChatInput
@@ -41,14 +47,10 @@ export default function AIPage() {
         disabled={isLoading}
       />
 
-
-      <Link href="/dashboard" className="fixed bottom-6 right-6 z-50 flex items-center gap-2 transition
-      hover:scale-105 hover:opacity-90 ">
-
-        <Button>
-          Back to Dashboard
-        </Button>
+      <Link href="/dashboard" className="fixed bottom-6 right-6 z-50">
+        <Button>Back to Dashboard</Button>
       </Link>
+
     </div>
   );
 }
